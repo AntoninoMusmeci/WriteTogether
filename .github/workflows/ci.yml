@@ -1,0 +1,32 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v2
+      - name: Install Cryptopp
+        run: |
+          wget https://www.cryptopp.com/cryptopp820.zip
+          mkdir -p cryptopp
+          mv cryptopp*.zip cryptopp
+          cd cryptopp
+          unzip cryptopp*.zip
+          make libcryptopp.a libcryptopp.so cryptest.exe
+          sudo make install
+      - name: Build
+        run: |
+          cmake .
+          make
+      - name: Test
+        run: ctest .

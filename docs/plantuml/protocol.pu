@@ -1,0 +1,33 @@
+@startuml
+hide empty description
+
+state "NOT AUTHENTICATED" as na
+state "PROFILE\nREQUESTED" as pr
+state "AUTHENTICATED" as a
+state "DOCUMENT LIST\nREQUESTED" as dlr
+state "DOCUMENT\nREQUESTED" as dr
+state "DOCUMENT\nOPENED" as do
+state "PROFILE UPDATE\nREQUESTED" as pur
+
+[*] --> na
+
+na --> pr : login / signup
+pr --> a : profile / signup_ok
+pr --> na : error
+a --> na : logout
+
+a -left-> pur : profile
+pur -right-> a : profile_ok / error
+
+a -right-> dlr : documents
+dlr -left-> a : documents
+
+a --> dr : open / create
+dr --> do : document
+dr --> a : error
+do --> a : close
+do --> do : insert / erase / cursor / open / close 
+
+note top of pur : Can be done even while one or\nmore documents are opened
+note right of dr : More than one document can be\nopened with the same mechanism
+@enduml
